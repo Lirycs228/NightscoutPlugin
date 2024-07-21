@@ -81,8 +81,8 @@ class Nightscout(ActionBase):
                 self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]))
                 entry_time = parser.parse(entries[0]["dateString"])
                 current_time = datetime.now(timezone.utc)
-                log.debug("Times: " + str(entry_time) + " , " + str(current_time))
-                time_delta_minutes = (current_time - entry_time).total_seconds() / 60.0
+                log.debug("Times: " + str(current_time) + " , " + str(entry_time))
+                time_delta_minutes = divmod((current_time - entry_time).total_seconds() / 60.0, 60)[0]
                 self.set_top_label(str(time_delta_minutes) + " mins ago")
             else:
                 self.set_center_label("no data")
