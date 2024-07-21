@@ -1,6 +1,7 @@
 from streamcontroller_plugin_tools import BackendBase
 import requests
 from datetime import datetime, timedelta
+from loguru import logger as log
 
 class Backend(BackendBase):
     def __init__(self):
@@ -21,7 +22,8 @@ class Backend(BackendBase):
                 connection_response = requests.get(
                     str(self.url) + "/api/v1/status",
                     params={"token": self.token}
-                )
+                ).content
+                log.debug("Response: " + str(connection_response))
             except Exception as e:
                 return False
             return "OK" in str(connection_response)
