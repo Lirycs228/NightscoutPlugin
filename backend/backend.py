@@ -17,10 +17,13 @@ class Backend(BackendBase):
 
     def get_connected(self):
         if not self.url == None and not self.token == None:
-            connection_response = requests.get(
-                str(self.url) + "/api/v1/status",
-                params={"token": self.token}
-            )
+            try:
+                connection_response = requests.get(
+                    str(self.url) + "/api/v1/status",
+                    params={"token": self.token}
+                )
+            except Exception as e:
+                return False
             return "OK" in str(connection_response)
         else:
             return False
@@ -39,11 +42,14 @@ class Backend(BackendBase):
     def _fetch_data(self):
         time = datetime.now() - timedelta(minutes=30)
         timestring = time.strftime('%Y-%m-%dT%H:%M:%SZ')
-        self.entries = requests.get(
-            str(self.url) + "/api/v1/entries/sgv.json",
-            params={"find[dateString][$gte]": timestring,
-                    "token": self.token}
-        ).json()
+        try:
+            self.entries = requests.get(
+                str(self.url) + "/api/v1/entries/sgv.json",
+                params={"find[dateString][$gte]": timestring,
+                        "token": self.token}
+            ).json()
+        except Exception as e:
+            pass
 
 
 backend = Backend()
