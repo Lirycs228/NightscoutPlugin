@@ -80,13 +80,13 @@ class Nightscout(ActionBase):
 
     def on_url_value_changed(self, nightscout_url):
         settings = self.get_settings()
-        settings["nightscout_url"] = str(nightscout_url.get_value())
+        settings["nightscout_url"] = str(nightscout_url.get_text())
         self.set_settings(settings)
         self.try_connection()
 
     def on_token_value_changed(self, nightscout_token):
         settings = self.get_settings()
-        settings["nightscout_token"] = str(nightscout_token.get_value())
+        settings["nightscout_token"] = str(nightscout_token.get_text())
         self.set_settings(settings)
         self.try_connection()
 
