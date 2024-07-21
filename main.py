@@ -32,6 +32,6 @@ class PluginTemplate(PluginBase):
         self.register(
             plugin_name = "Nightscout Viewer",
             github_repo = "https://github.com/Lirycs228/NightscoutPlugin",
-            plugin_version = "0.0.1",
+            plugin_version = "0.1.0",
             app_version = "1.0.0-alpha"
         )

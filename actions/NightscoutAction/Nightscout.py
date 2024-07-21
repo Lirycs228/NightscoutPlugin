@@ -21,6 +21,7 @@ class Nightscout(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.status_label = Gtk.Label(label="No Connection", css_classes=["bold", "red"])
+        self.seconds_since_last_update = 0
     
     def update_status_label(self):
         if self.plugin_base.backend.get_connected():
@@ -75,6 +76,11 @@ class Nightscout(ActionBase):
                 return "\u21D3" # doubble-down
     
     def on_tick(self):
+        self.seconds_since_last_update += 1
+
+        if(self.seconds_since_last_update > 60):
+            self.plugin_base.backend.manual_update()
+
         if self.plugin_base.backend is not None:
             entries = self.plugin_base.backend.get_view()
             if entries != None and entries != -1:
