@@ -3,7 +3,6 @@ from src.backend.PluginManager.PluginBase import PluginBase
 from src.backend.PluginManager.ActionHolder import ActionHolder
 
 # Import actions
-from .actions.SimpleAction.SimpleAction import SimpleAction
 from .actions.NightscoutAction.Nightscout import Nightscout
 
 import os
@@ -31,5 +30,5 @@ class PluginTemplate(PluginBase):
             plugin_name = "Nightscout Viewer",
             github_repo = "https://github.com/Lirycs228/NightscoutPlugin",
             plugin_version = "0.0.1",
-            app_version = "1.1.1-alpha"
+            app_version = "1.0.0-alpha"
         )
