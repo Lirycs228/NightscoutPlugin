@@ -84,15 +84,15 @@ class Nightscout(ActionBase):
         if self.plugin_base.backend is not None:
             entries = self.plugin_base.backend.get_view()
             if entries != None and entries != -1:
-                self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]))
+                self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]), font_size=18)
                 entry_time = parser.parse(entries[0]["dateString"])
                 current_time = datetime.now(timezone.utc)
                 current_time = current_time.replace(microsecond=0)
-                log.debug("Times: " + str(current_time) + " , " + str(entry_time))
+                #log.debug("Times: " + str(current_time) + " , " + str(entry_time))
                 time_delta_minutes = divmod((current_time - entry_time).total_seconds(), 60)[0]
                 self.set_top_label(str(int(time_delta_minutes)) + " m")
             else:
-                self.set_center_label("no data")
+                self.set_center_label("no data", font_size=18)
                 self.set_top_label("")
     
     def get_config_rows(self) -> list:

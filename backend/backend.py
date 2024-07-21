@@ -23,7 +23,7 @@ class Backend(BackendBase):
                     str(self.url) + "/api/v1/status",
                     params={"token": self.token}
                 ).content
-                log.debug("Connection Response: " + str(connection_response))
+                #log.debug("Connection Response: " + str(connection_response))
             except Exception as e:
                 return False
             return "OK" in str(connection_response)
@@ -35,7 +35,7 @@ class Backend(BackendBase):
             if len(self.entries) > 0:
                 return self.entries
             else:
-                log.debug("Entries list: " + str(self.entries))
+                #log.debug("Entries list: " + str(self.entries))
                 return None
         else:
             return None
@@ -51,7 +51,7 @@ class Backend(BackendBase):
     def _fetch_data(self):
         time = datetime.now(timezone.utc) - timedelta(minutes=30)
         timestring = time.strftime('%Y-%m-%dT%H:%M:%SZ')
-        log.info("Getting data from time: " + str(timestring))
+        #log.info("Getting data from time: " + str(timestring))
         try:
             self.entries = requests.get(
                 str(self.url) + "/api/v1/entries/sgv.json",
