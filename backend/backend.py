@@ -35,6 +35,9 @@ class Backend(BackendBase):
             return self.entries[0]["sgv"]
         else:
             return -1
+        
+    def manual_update(self):
+        self._update_view()
 
     def _update_view(self):
         if not self.url == None and not self.token == None:

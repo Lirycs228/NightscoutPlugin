@@ -53,7 +53,7 @@ class Nightscout(ActionBase):
                 self.try_connection()
     
     def on_key_down(self):
-        self.plugin_base.backend._update_view()
+        self.plugin_base.backend.manual_update()
     
     def on_tick(self):
         if self.plugin_base.backend is not None:
