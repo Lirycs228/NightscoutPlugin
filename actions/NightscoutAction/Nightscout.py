@@ -37,8 +37,8 @@ class Nightscout(ActionBase):
     def try_connection(self):
         try:
             self.plugin_base.backend.try_connect(
-                url=self.plugin_base.get_settings().get("nightscout_url", "localhost"),
-                token=self.plugin_base.get_settings().get("nightscout_token", "token")
+                url=self.plugin_base.get_settings().get("nightscout_url"),
+                token=self.plugin_base.get_settings().get("nightscout_token")
             )
             self.update_status_label()
         except Exception as e:
@@ -61,7 +61,7 @@ class Nightscout(ActionBase):
     
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()
-        self.nightscout_url.set_title("URL of the Nightscout Instance")
+        self.nightscout_url.set_title("URL of the Nightscout Instance with http(s)://")
 
         self.nightscout_token = Adw.PasswordEntryRow()
         self.nightscout_token.set_title("Access Token with 'readable' Role")
@@ -75,8 +75,8 @@ class Nightscout(ActionBase):
 
     def load_config_values(self):
         settings = self.get_settings()
-        self.nightscout_url.set_text(settings.get("nightscout_url", "http://localhost"))
-        self.nightscout_token.set_text(settings.get("nightscout_token", "token"))
+        self.nightscout_url.set_text(settings.get("nightscout_url"))
+        self.nightscout_token.set_text(settings.get("nightscout_token"))
 
     def on_url_value_changed(self, nightscout_url):
         settings = self.get_settings()
