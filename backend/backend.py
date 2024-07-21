@@ -32,7 +32,11 @@ class Backend(BackendBase):
 
     def get_view(self):
         if not self.entries == None:
-            return self.entries[0]["sgv"]
+            if len(self.entries) > 0:
+                return self.entries[0]["sgv"]
+            else:
+                log.debug("Entries list: " + str(self.entries))
+                return -1
         else:
             return -1
         
@@ -47,6 +51,7 @@ class Backend(BackendBase):
     def _fetch_data(self):
         time = datetime.now() - timedelta(minutes=30)
         timestring = time.strftime('%Y-%m-%dT%H:%M:%SZ')
+        log.info("Getting data from time: " + str(timestring))
         try:
             self.entries = requests.get(
                 str(self.url) + "/api/v1/entries/sgv.json",
