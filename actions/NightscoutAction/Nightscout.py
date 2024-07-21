@@ -49,14 +49,14 @@ class Nightscout(ActionBase):
 
     def on_ready(self):
         if self.plugin_base.backend is not None:
-            if not self.plugin_base.get_connected():
+            if not self.plugin_base.backend.get_connected():
                 self.try_connection()
     
     def on_key_down(self):
         self.plugin_base._update_view()
     
     def on_tick(self):
-        self.set_center_label(str(self.plugin_base.get_view()))
+        self.set_center_label(str(self.plugin_base.backend.get_view()))
     
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()
