@@ -6,6 +6,8 @@ from src.backend.PluginManager.PluginBase import PluginBase
 
 import os
 from loguru import logger as log 
+from datetime import datetime, timedelta, timezone
+from dateutil import parser
 
 
 # Import gtk
@@ -55,9 +57,29 @@ class Nightscout(ActionBase):
     def on_key_down(self):
         self.plugin_base.backend.manual_update()
     
+    def direction_to_arrow(self, direction):
+        match direction:
+            case "Flat":
+                return "\u279E" # right
+            case "FortyFiveUp":
+                return "\u2B08" # up-right
+            case "FortyFiveDown":
+                return "\u2B0A" # down-right
+            case "SingleUp":
+                return "\u2191" # up
+            case "DoubleUp":
+                return "\u21D1" # doubble-up
+            case "SingleDown":
+                return "\u2193" # down
+            case "DoubleDown":
+                return "\u21D3" # doubble-down
+    
     def on_tick(self):
         if self.plugin_base.backend is not None:
-            self.set_center_label(str(self.plugin_base.backend.get_view()))
+            entries = self.plugin_base.backend.get_view()
+            self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]))
+            time_delta_minutes = (datetime.now(timezone.utc) - parser.parse(entries[0]["dateString"])).total_seconds() / 60.0
+            self.set_top_label(str(time_delta_minutes) + " mins ago")
     
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()

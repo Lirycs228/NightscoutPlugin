@@ -33,7 +33,7 @@ class Backend(BackendBase):
     def get_view(self):
         if not self.entries == None:
             if len(self.entries) > 0:
-                return self.entries[0]["sgv"]
+                return self.entries
             else:
                 log.debug("Entries list: " + str(self.entries))
                 return -1
