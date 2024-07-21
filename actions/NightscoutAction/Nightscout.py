@@ -77,7 +77,7 @@ class Nightscout(ActionBase):
         settings = self.plugin_base.get_settings()
 
         settings.setdefault("nightscout_url", "http://localhost")
-        settings.setdefault("token", "")
+        settings.setdefault("nightscout_token", "")
         self.plugin_base.set_settings(settings)
         settings = self.plugin_base.get_settings()
 
