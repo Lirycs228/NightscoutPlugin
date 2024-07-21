@@ -11,23 +11,30 @@ class Backend(BackendBase):
         self.entries = None
     
     def try_connect(self, url=None, token=None):
-        self.url = url
-        self.token = token
+        if not url == None and not token == None:
+            self.url = url
+            self.token = token
 
     def get_connected(self):
-        connection_response = requests.get(
-            str(self.url) + "/api/v1/status",
-            params={"token": self.token}
-        )
-        return "OK" in str(connection_response)
+        if not self.url == None and not self.token == None:
+            connection_response = requests.get(
+                str(self.url) + "/api/v1/status",
+                params={"token": self.token}
+            )
+            return "OK" in str(connection_response)
+        else:
+            return False
 
     def get_view(self):
-        if self.entries != None:
+        if not self.entries == None:
             return self.entries[0]["sgv"]
+        else:
+            return -1
 
     def _update_view(self):
-        self._fetch_data()
-        
+        if not self.url == None and not self.token == None:
+            self._fetch_data()
+
 
     def _fetch_data(self):
         time = datetime.now() - timedelta(minutes=30)
