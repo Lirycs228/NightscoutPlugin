@@ -25,7 +25,6 @@ class Backend(BackendBase):
                 ).content
                 log.debug("Connection Response: " + str(connection_response))
             except Exception as e:
-                log.debug("Connection Error: " + str(e))
                 return False
             return "OK" in str(connection_response)
         else:
