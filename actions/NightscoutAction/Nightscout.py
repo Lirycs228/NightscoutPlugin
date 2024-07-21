@@ -75,7 +75,7 @@ class Nightscout(ActionBase):
 
     def load_config_values(self):
         settings = self.get_settings()
-        self.nightscout_url.set_text(settings.get("nightscout_url", "localhost"))
+        self.nightscout_url.set_text(settings.get("nightscout_url", "http://localhost"))
         self.nightscout_token.set_text(settings.get("nightscout_token", "token"))
 
     def on_url_value_changed(self, nightscout_url):
