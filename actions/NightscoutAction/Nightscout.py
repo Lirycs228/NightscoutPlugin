@@ -56,7 +56,8 @@ class Nightscout(ActionBase):
         self.plugin_base._update_view()
     
     def on_tick(self):
-        self.set_center_label(str(self.plugin_base.backend.get_view()))
+        if self.plugin_base.backend is not None:
+            self.set_center_label(str(self.plugin_base.backend.get_view()))
     
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()
