@@ -74,20 +74,26 @@ class Nightscout(ActionBase):
         return [self.nightscout_url, self.nightscout_token] #
 
     def load_config_values(self):
-        settings = self.get_settings()
+        settings = self.plugin_base.get_settings()
+
+        settings.setdefault("nightscout_url", "http://localhost")
+        settings.setdefault("token", "")
+        self.plugin_base.set_settings(settings)
+        settings = self.plugin_base.get_settings()
+
         self.nightscout_url.set_text(settings.get("nightscout_url"))
         self.nightscout_token.set_text(settings.get("nightscout_token"))
 
     def on_url_value_changed(self, nightscout_url):
-        settings = self.get_settings()
+        settings = self.plugin_base.get_settings()
         settings["nightscout_url"] = str(nightscout_url.get_text())
-        self.set_settings(settings)
+        self.plugin_base.set_settings(settings)
         self.try_connection()
 
     def on_token_value_changed(self, nightscout_token):
-        settings = self.get_settings()
+        settings = self.plugin_base.get_settings()
         settings["nightscout_token"] = str(nightscout_token.get_text())
-        self.set_settings(settings)
+        self.plugin_base.set_settings(settings)
         self.try_connection()
 
 
