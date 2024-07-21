@@ -13,7 +13,9 @@ class PluginTemplate(PluginBase):
 
         ## Launch backend
         backend_path = os.path.join(self.PATH, "backend", "backend.py") 
-        self.launch_backend(backend_path=backend_path, open_in_terminal=True) 
+        print("Launching backend: ", backend_path)
+        self.launch_backend(backend_path=backend_path, open_in_terminal=True)
+        print("Backend launched")
 
         ## Register actions
         self.nightscout_action_holder = ActionHolder(
