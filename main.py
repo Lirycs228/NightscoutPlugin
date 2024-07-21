@@ -6,6 +6,7 @@ from src.backend.PluginManager.ActionHolder import ActionHolder
 from .actions.NightscoutAction.Nightscout import Nightscout
 
 import os
+from loguru import logger as log 
 
 class PluginTemplate(PluginBase):
     def __init__(self):
@@ -13,9 +14,9 @@ class PluginTemplate(PluginBase):
 
         ## Launch backend
         backend_path = os.path.join(self.PATH, "backend", "backend.py") 
-        print("Launching backend: ", backend_path)
-        self.launch_backend(backend_path=backend_path, open_in_terminal=True)
-        print("Backend launched")
+        log.debug("Launching backend: ", backend_path)
+        self.launch_backend(backend_path=backend_path, open_in_terminal=False)
+        log.debug("Backend launched")
 
         ## Register actions
         self.nightscout_action_holder = ActionHolder(
