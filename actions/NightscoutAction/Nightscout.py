@@ -77,7 +77,7 @@ class Nightscout(ActionBase):
     def on_tick(self):
         if self.plugin_base.backend is not None:
             entries = self.plugin_base.backend.get_view()
-            if not entries == None or  not entries == -1:
+            if entries != None and entries != -1:
                 self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]))
                 time_delta_minutes = (datetime.now(timezone.utc) - parser.parse(entries[0]["dateString"])).total_seconds() / 60.0
                 self.set_top_label(str(time_delta_minutes) + " mins ago")

@@ -36,9 +36,9 @@ class Backend(BackendBase):
                 return self.entries
             else:
                 log.debug("Entries list: " + str(self.entries))
-                return -1
+                return None
         else:
-            return -1
+            return None
         
     def manual_update(self):
         self._update_view()
