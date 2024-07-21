@@ -83,7 +83,7 @@ class Nightscout(ActionBase):
                 current_time = datetime.now(timezone.utc)
                 current_time = current_time.replace(microsecond=0)
                 log.debug("Times: " + str(current_time) + " , " + str(entry_time))
-                time_delta_minutes = divmod((current_time - entry_time).total_seconds() / 60.0, 60)[0]
+                time_delta_minutes = divmod((current_time - entry_time).total_seconds(), 60)[0]
                 self.set_top_label(str(int(time_delta_minutes)) + " m")
             else:
                 self.set_center_label("no data")
