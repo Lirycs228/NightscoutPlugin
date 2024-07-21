@@ -77,9 +77,13 @@ class Nightscout(ActionBase):
     def on_tick(self):
         if self.plugin_base.backend is not None:
             entries = self.plugin_base.backend.get_view()
-            self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]))
-            time_delta_minutes = (datetime.now(timezone.utc) - parser.parse(entries[0]["dateString"])).total_seconds() / 60.0
-            self.set_top_label(str(time_delta_minutes) + " mins ago")
+            if not entries == None or entries == -1:
+                self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]))
+                time_delta_minutes = (datetime.now(timezone.utc) - parser.parse(entries[0]["dateString"])).total_seconds() / 60.0
+                self.set_top_label(str(time_delta_minutes) + " mins ago")
+            else:
+                self.set_center_label("no data")
+                self.set_top_label("")
     
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()
