@@ -1,6 +1,6 @@
 from streamcontroller_plugin_tools import BackendBase
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from loguru import logger as log
 
 class Backend(BackendBase):
@@ -49,7 +49,7 @@ class Backend(BackendBase):
 
 
     def _fetch_data(self):
-        time = datetime.now() - timedelta(minutes=30)
+        time = datetime.now(timezone.utc) - timedelta(minutes=30)
         timestring = time.strftime('%Y-%m-%dT%H:%M:%SZ')
         log.info("Getting data from time: " + str(timestring))
         try:
