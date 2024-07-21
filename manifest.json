@@ -1,6 +1,6 @@
 {
     "version": "0.0.1",
-    "thumbnail": "",
+    "thumbnail": "store/lirycs.png",
     "id": "dev_lirycs_NightscoutViewer",
     "name": "Nightscout Viewer"
 }
