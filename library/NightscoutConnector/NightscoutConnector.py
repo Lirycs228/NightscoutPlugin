@@ -32,11 +32,25 @@ class NightscoutConnector:
             else:
                 return None
 
-    def get_last_N_mins(self, url="http://localhost", token="123", N=200):
+    def get_last_N_mins_values(self, url="http://localhost", token="123", N=200):
         if not url == None and not token == None:
             time_from = datetime.now(timezone.utc) - timedelta(minutes=N)
             time_until = datetime.now(timezone.utc)
-            entries = self._fetch_after_datetime(url, token, time_from, time_until)
+            entries = self._fetch_after_datetime_values(url, token, time_from, time_until)
+            if not entries == None:
+                if len(entries) > 0:
+                    return entries
+                else:
+                    #log.debug("Entries list: " + str(self.entries))
+                    return None
+            else:
+                return None
+    
+    def get_last_N_mins_treatments(self, url="http://localhost", token="123", N=200):
+        if not url == None and not token == None:
+            time_from = datetime.now(timezone.utc) - timedelta(minutes=N)
+            time_until = datetime.now(timezone.utc)
+            entries = self._fetch_after_datetime_treatments(url, token, time_from, time_until)
             if not entries == None:
                 if len(entries) > 0:
                     return entries
@@ -47,13 +61,29 @@ class NightscoutConnector:
                 return None
 
 
-    def _fetch_after_datetime(self, url, token, datetime_from, datetime_until):
+    def _fetch_after_datetime_values(self, url, token, datetime_from, datetime_until):
         timestring_from = datetime_from.strftime('%Y-%m-%dT%H:%M:%SZ')
         timestring_until = datetime_until.strftime('%Y-%m-%dT%H:%M:%SZ')
         #log.info("Getting data from time: " + str(timestring))
         try:
             entries = requests.get(
                 str(url) + "/api/v1/entries/sgv.json",
+                params={"find[dateString][$gte]": timestring_from,
+                        "find[dateString][$lte]": timestring_until,
+                        "count": 1000,
+                        "token": token,}
+            ).json()
+            return entries
+        except Exception as e:
+            return None
+    
+    def _fetch_after_datetime_treatments(self, url, token, datetime_from, datetime_until):
+        timestring_from = datetime_from.strftime('%Y-%m-%dT%H:%M:%SZ')
+        timestring_until = datetime_until.strftime('%Y-%m-%dT%H:%M:%SZ')
+        #log.info("Getting data from time: " + str(timestring))
+        try:
+            entries = requests.get(
+                str(url) + "/api/v1/treatments.json",
                 params={"find[dateString][$gte]": timestring_from,
                         "find[dateString][$lte]": timestring_until,
                         "count": 1000,

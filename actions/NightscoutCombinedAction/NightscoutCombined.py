@@ -127,7 +127,7 @@ class NightscoutCombined(ActionBase):
 
         if(self.seconds_since_last_update > self.seconds_until_update):
             self.seconds_since_last_update = 0
-            entries = self.plugin_base.NightscoutConnector.get_last_N_mins(
+            entries = self.plugin_base.NightscoutConnector.get_last_N_mins_values(
                 self.get_settings().get("nightscout_url"),
                 self.get_settings().get("nightscout_token"),
                 N=200

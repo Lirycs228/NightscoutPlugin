@@ -93,6 +93,52 @@ class NightscoutGraph(ActionBase):
 
         return data
     
+    def extract_treatments(self, treatments, time_from, time_until):
+        minutes = divmod((time_until - time_from).total_seconds(), 60)[0]
+
+        data = np.zeros((200, 2))
+
+        for treat in treatments:
+            entry_time = parser.parse(treat["created_at"])
+            minutes_since_beginn = divmod((entry_time - time_from).total_seconds(), 60)[0]
+            data[int(minutes_since_beginn)][0] = treat["carbs"]
+            data[int(minutes_since_beginn)][1] = treat["insulin"]
+
+        return data
+    
+    def add_treatments(self, graph, values):
+        draw = ImageDraw.Draw(graph)
+
+        top_pad = 100
+        height_range = 300 # 50 bottom, 150 top
+        left_pad = 50
+        point_spacing = 2# assumption: 200 minutes in 400 pixels
+        radius = 8
+
+        values[:, 0] = np.clip(values[:, 0], 0, 100)
+        values[:, 1] = np.clip(values[:, 1], 0, 100)
+
+        for count, value in enumerate(values):
+            if value != None and value != 0:
+                if value[0] > 0 and value[0] != None:
+                    # carbs
+                    draw.line((
+                        left_pad+(point_spacing*count), 
+                        top_pad, 
+                        left_pad+(point_spacing*count), 
+                        top_pad+value[0]
+                        ), fill=(0, 0, 255), width=5)
+                if value[1] > 0 and value[1] != None:
+                    # insulin
+                    draw.line((
+                        left_pad+(point_spacing*count), 
+                        top_pad+height_range, 
+                        left_pad+(point_spacing*count), 
+                        top_pad+height_range-value[1]
+                        ), fill=(0, 0, 255), width=5)
+
+        return graph
+    
     def build_graph(self, values):
         canvas = Image.new("RGB", (500, 500), color="black")
         draw = ImageDraw.Draw(canvas)
@@ -127,7 +173,7 @@ class NightscoutGraph(ActionBase):
 
         if(self.seconds_since_last_update > self.seconds_until_update):
             self.seconds_since_last_update = 0
-            entries = self.plugin_base.NightscoutConnector.get_last_N_mins(
+            entries = self.plugin_base.NightscoutConnector.get_last_N_mins_values(
                 self.get_settings().get("nightscout_url"),
                 self.get_settings().get("nightscout_token"),
                 N=200
@@ -139,6 +185,16 @@ class NightscoutGraph(ActionBase):
                     time_from = time_from = datetime.now(timezone.utc) - timedelta(minutes=200)
                     graph = self.build_graph(self.extract_values(entries, time_from, current_time))
                     self.set_media(image=graph)
+
+                    # TREATMENTS
+                    treatments = self.plugin_base.NightscoutConnector.get_last_N_mins_treatments(
+                        self.get_settings().get("nightscout_url"),
+                        self.get_settings().get("nightscout_token"),
+                        N=200
+                    )
+                    if treatments != None:
+                        if len(treatments) > 0:
+                            graph = self.add_treatments(graph, self.extract_treatments(treatments, time_from, current_time))
                 else:
                     self.set_media(image=Image.new("RGB", (500, 500), color="black"))
             else:
