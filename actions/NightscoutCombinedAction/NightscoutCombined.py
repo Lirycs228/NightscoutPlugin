@@ -19,7 +19,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw 
 
 
-class NightscoutGraph(ActionBase):
+class NightscoutCombined(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.status_label = Gtk.Label(label="No Connection", css_classes=["bold", "red"])
@@ -82,7 +82,7 @@ class NightscoutGraph(ActionBase):
     def extract_values(self, entries, time_from, time_until):
         minutes = divmod((time_until - time_from).total_seconds(), 60)[0]
 
-        data = np.zeros(int(minutes))
+        data = np.zeros(200)
 
         for entry in entries:
             if entry["type"] == "sgv":
@@ -90,30 +90,31 @@ class NightscoutGraph(ActionBase):
                 minutes_since_beginn = divmod((entry_time - time_from).total_seconds(), 60)[0]
                 data[int(minutes_since_beginn)] = entry["sgv"]
 
-        data = (data - np.min(data)) / (np.max(data) - np.min(data))
-
         return data
     
     def build_graph(self, values):
         canvas = Image.new("RGB", (500, 500), color="black")
         draw = ImageDraw.Draw(canvas)
 
-        top_pad = 300
+        top_pad = 200
         height_range = 200 # 50 bottom, 150 top
         left_pad = 50
         point_spacing = 2# assumption: 200 minutes in 400 pixels
         radius = 8
 
-        values = values*height_range
+        data = np.clip(values, 0, 300)
+        data = data * (height_range/300)
 
-        draw.line((0, top_pad, 500, top_pad), fill=(100, 100, 100), width=3)
+        draw.line((left_pad, top_pad, 500-left_pad, top_pad), fill=(150, 150, 150), width=3)
+        draw.line((left_pad, top_pad+height_range, 500-left_pad, top_pad+height_range), fill=(150, 150, 150), width=3)
+        draw.line((left_pad, top_pad+height_range - 100*(height_range/200), 500-left_pad, top_pad+height_range - 100*(height_range/200)), fill=(150, 150, 150), width=3)
         
-        for count, value in enumerate(values):
+        for count, (value, datum) in enumerate(zip(values, data)):
             if value != None and value != 0:
                 position = (   left_pad+(point_spacing*count)-radius, 
-                        top_pad+(height_range-int(value))-radius, 
+                        top_pad+(height_range-int(datum))-radius, 
                         left_pad+(point_spacing*count)+radius, 
-                        top_pad+(height_range-int(value))+radius  )
+                        top_pad+(height_range-int(datum))+radius  )
                 draw.ellipse(
                     position, 
                     fill=self.get_color(value))
@@ -133,24 +134,24 @@ class NightscoutGraph(ActionBase):
             if entries != None:
                 if len(entries) > 0:
                     if entries[0]["type"] == "sgv":
-                        self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]), font_size=20)
+                        self.set_top_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]), font_size=18)
                         entry_time = parser.parse(entries[0]["dateString"])
 
                         current_time = datetime.now(timezone.utc)
                         current_time = current_time.replace(microsecond=0)
                         time_delta_minutes = divmod((current_time - entry_time).total_seconds(), 60)[0]
-                        self.set_top_label(str(int(time_delta_minutes)) + " m", font_size=16)
+                        self.set_bottom_label(str(int(time_delta_minutes)) + " m", font_size=16)
 
                         time_from = time_from = datetime.now(timezone.utc) - timedelta(minutes=200)
                         graph = self.build_graph(self.extract_values(entries, time_from, current_time))
                         self.set_media(image=graph)
                 else:
-                    self.set_center_label("no data", font_size=18)
-                    self.set_top_label("")
+                    self.set_top_label("no data", font_size=18)
+                    self.set_bottom_label("")
                     self.set_media(image=Image.new("RGB", (500, 500), color="black"))
             else:
-                self.set_center_label("no data", font_size=18)
-                self.set_top_label("")
+                self.set_top_label("no data", font_size=18)
+                self.set_bottom_label("")
                 self.set_media(image=Image.new("RGB", (500, 500), color="black"))
     
     def get_config_rows(self) -> list:

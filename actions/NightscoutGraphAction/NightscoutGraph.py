@@ -82,7 +82,7 @@ class NightscoutGraph(ActionBase):
     def extract_values(self, entries, time_from, time_until):
         minutes = divmod((time_until - time_from).total_seconds(), 60)[0]
 
-        data = np.zeros(int(minutes))
+        data = np.zeros(200)
 
         for entry in entries:
             if entry["type"] == "sgv":
@@ -107,14 +107,14 @@ class NightscoutGraph(ActionBase):
         draw.line((left_pad, top_pad, 500-left_pad, top_pad), fill=(150, 150, 150), width=3)
         draw.line((left_pad, top_pad+height_range, 500-left_pad, top_pad+height_range), fill=(150, 150, 150), width=3)
         draw.line((left_pad, top_pad+height_range-100, 500-left_pad, top_pad+height_range-100), fill=(0, 150, 0), width=3)
-        draw.line((500-left_pad, top_pad, 500-left_pad, top_pad+height_range), fill=(150, 150, 150), width=3)
+        #draw.line((500-left_pad, top_pad, 500-left_pad, top_pad+height_range), fill=(150, 150, 150), width=3)
         
-        for count, (value, data) in enumerate(zip(values, data)):
+        for count, (value, datum) in enumerate(zip(values, data)):
             if value != None and value != 0:
                 position = (   left_pad+(point_spacing*count)-radius, 
-                        top_pad+(height_range-int(data))-radius, 
+                        top_pad+(height_range-int(datum))-radius, 
                         left_pad+(point_spacing*count)+radius, 
-                        top_pad+(height_range-int(data))+radius  )
+                        top_pad+(height_range-int(datum))+radius  )
                 draw.ellipse(
                     position, 
                     fill=self.get_color(value))
