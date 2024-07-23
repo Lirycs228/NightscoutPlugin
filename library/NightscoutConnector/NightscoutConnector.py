@@ -56,7 +56,8 @@ class NightscoutConnector:
                 str(url) + "/api/v1/entries/sgv.json",
                 params={"find[dateString][$gte]": timestring_from,
                         "find[dateString][$lte]": timestring_until,
-                        "token": token}
+                        "count": 1000,
+                        "token": token,}
             ).json()
             return entries
         except Exception as e:
