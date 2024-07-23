@@ -68,6 +68,7 @@ class NightscoutLabel(ActionBase):
         self.seconds_since_last_update += 1
 
         if(self.seconds_since_last_update > 60):
+            self.seconds_since_last_update = 0
             entry = self.plugin_base.NightscoutConnector.get_last_entry(
                 self.get_settings().get("nightscout_url"),
                 self.get_settings().get("nightscout_token")
