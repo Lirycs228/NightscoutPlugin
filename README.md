@@ -44,6 +44,16 @@ Having multiple view actions (Graph, Combined) on one page with both of them set
 6. Go to the shop and download the plugin
 7. Enjoy
 
+### Setup
+
+1. Get the URL of your Nightscout instance
+2. Optionally generate a token with the "readable" Role if you configured Nightscout to need authentication
+3. Add One of the Nightscout actions to a key in StreamController
+4. Click on the action to get to the settings
+5. Input the URL and optionally the token
+6. It should say Connected beneath the inputs if the instance could be reached
+7. In a moment the data should appear 
+
 ### TODO
 
 + Expose more Settings
