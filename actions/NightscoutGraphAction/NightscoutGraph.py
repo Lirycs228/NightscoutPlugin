@@ -106,6 +106,7 @@ class NightscoutGraph(ActionBase):
 
         values = values*height_range
         log.debug("Sum of values: " + str(np.sum(values)))
+        log.debug("Numpy array: " + str(values))
 
         draw.line((0, 0, 500, 500), fill="blue", width=3)
         
