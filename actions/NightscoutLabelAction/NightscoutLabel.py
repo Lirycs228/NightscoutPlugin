@@ -75,13 +75,14 @@ class NightscoutLabel(ActionBase):
                 self.get_settings().get("nightscout_token")
             )
             if entry != None:
-                self.set_center_label(str(entry["sgv"]) + " " + self.direction_to_arrow(entry["direction"]), font_size=20)
-                entry_time = parser.parse(entry["dateString"])
-                current_time = datetime.now(timezone.utc)
-                current_time = current_time.replace(microsecond=0)
-                #log.debug("Times: " + str(current_time) + " , " + str(entry_time))
-                time_delta_minutes = divmod((current_time - entry_time).total_seconds(), 60)[0]
-                self.set_top_label(str(int(time_delta_minutes)) + " m", font_size=16)
+                if entry["type"] == "sgv":
+                    self.set_center_label(str(entry["sgv"]) + " " + self.direction_to_arrow(entry["direction"]), font_size=20)
+                    entry_time = parser.parse(entry["dateString"])
+                    current_time = datetime.now(timezone.utc)
+                    current_time = current_time.replace(microsecond=0)
+                    #log.debug("Times: " + str(current_time) + " , " + str(entry_time))
+                    time_delta_minutes = divmod((current_time - entry_time).total_seconds(), 60)[0]
+                    self.set_top_label(str(int(time_delta_minutes)) + " m", font_size=16)
             else:
                 self.set_center_label("no data", font_size=18)
                 self.set_top_label("")
