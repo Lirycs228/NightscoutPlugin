@@ -202,7 +202,7 @@ class NightscoutGraph(ActionBase):
                 self.last_worked = False
             
             # TREATMENTS
-            if self.last_worked and self.seconds_since_last_update > int(self.seconds_until_update/2):
+            if self.last_worked and self.seconds_since_last_update > 10:
                 treatments = self.plugin_base.NightscoutConnector.get_last_N_mins_treatments(
                     self.get_settings().get("nightscout_url"),
                     self.get_settings().get("nightscout_token"),
@@ -213,6 +213,7 @@ class NightscoutGraph(ActionBase):
                     log.debug("TREATMENTS")
                     if len(treatments) > 0:
                         graph = self.add_treatments(graph, self.extract_treatments(treatments, time_from, current_time))
+                        self.set_media(image=graph)
 
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()
