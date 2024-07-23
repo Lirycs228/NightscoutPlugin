@@ -84,8 +84,8 @@ class NightscoutConnector:
         try:
             entries = requests.get(
                 str(url) + "/api/v1/treatments.json",
-                params={"find[dateString][$gte]": timestring_from,
-                        "find[dateString][$lte]": timestring_until,
+                params={"find[created_at][$gte]": timestring_from,
+                        "find[created_at][$lte]": timestring_until,
                         "count": 1000,
                         "token": token,}
             ).json()
