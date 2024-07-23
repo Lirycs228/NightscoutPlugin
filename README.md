@@ -1,5 +1,7 @@
 ## Nightscout Viewer
 
+![Logo](store/banner_name.png)
+
 This is simple little Project to show the current Nightscout Value and its Trend
 on a Button for StreamController
 
@@ -20,7 +22,12 @@ Version: 0.1.0
 
 Version 0.2.0
 
-+ ...
++ Add Graph View
++ Add Combined View
++ Add Nightscout Instance per Action
++ Add colorized Plot on Image Views
+
+![Screenshot](store/Preview_0_2_0.png)
 
 ### Installation
 
@@ -34,8 +41,6 @@ Version 0.2.0
 
 ### TODO
 
-+ Plot Values as Image to show on Key
 + Expose more Settings
-+ Add Possibility for multiple Nightscout Instances
 + Take other Data from Nightscout into Account(Profiles, Food, Insulin, Predictions)
 + Add visual Alerts (Red font, flashing)

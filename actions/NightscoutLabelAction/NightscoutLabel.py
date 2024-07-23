@@ -47,6 +47,7 @@ class NightscoutLabel(ActionBase):
             self.get_settings().get("nightscout_token")
         ):
             self.update_status_label()
+        self.seconds_since_last_update = 100
     
     def direction_to_arrow(self, direction):
         match direction:
