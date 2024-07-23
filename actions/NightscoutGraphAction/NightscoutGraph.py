@@ -212,7 +212,7 @@ class NightscoutGraph(ActionBase):
             if treatments != None:
                 log.debug("TREATMENTS")
                 if len(treatments) > 0:
-                    graph = self.add_treatments(graph, self.extract_treatments(treatments, time_from, current_time))
+                    graph = self.add_treatments(self.last_graph, self.extract_treatments(treatments, time_from, current_time))
                     self.set_media(image=graph)
 
     def get_config_rows(self) -> list:
