@@ -8,6 +8,8 @@ import os
 from loguru import logger as log 
 from datetime import datetime, timedelta, timezone
 from dateutil import parser
+from PIL import Image, ImageDraw
+import numpy as np
 
 
 # Import gtk
@@ -21,10 +23,14 @@ class NightscoutGraph(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.status_label = Gtk.Label(label="No Connection", css_classes=["bold", "red"])
-        self.seconds_since_last_update = 0
+        self.seconds_until_update = 30
+        self.seconds_since_last_update = self.seconds_until_update
     
     def update_status_label(self):
-        if self.plugin_base.backend.get_connected():
+        if self.plugin_base.NightscoutConnector.has_connection(
+            self.get_settings().get("nightscout_url"),
+            self.get_settings().get("nightscout_token")
+        ):
             self.status_label.set_label("Connected")
             self.status_label.remove_css_class("red")
             self.status_label.add_css_class("green")
@@ -36,28 +42,13 @@ class NightscoutGraph(ActionBase):
     def get_custom_config_area(self):
         self.update_status_label()
         return self.status_label
-    
-    def try_connection(self):
-        try:
-            self.plugin_base.backend.try_connect(
-                url=self.plugin_base.get_settings().get("nightscout_url"),
-                token=self.plugin_base.get_settings().get("nightscout_token")
-            )
-            self.update_status_label()
-        except Exception as e:
-            log.error(e)
-            self.show_error()
-            self.update_status_label()
-            return
 
     def on_ready(self):
-        if self.plugin_base.backend is not None:
-            if not self.plugin_base.backend.get_connected():
-                self.try_connection()
-            self.plugin_base.backend.manual_update()
-    
-    def on_key_down(self):
-        self.plugin_base.backend.manual_update()
+        if not self.plugin_base.NightscoutConnector.has_connection(
+            self.get_settings().get("nightscout_url"),
+            self.get_settings().get("nightscout_token")
+        ):
+            self.update_status_label()
     
     def direction_to_arrow(self, direction):
         match direction:
@@ -76,25 +67,83 @@ class NightscoutGraph(ActionBase):
             case "DoubleDown":
                 return "\u21D3" # doubble-down
     
+    def get_color(self, value):
+        if value < 65:
+            return "red"
+        elif value < 80:
+            return "yellow"
+        elif value < 180:
+            return "green"
+        elif value < 250:
+            return "yellow"
+        else:
+            return "red"
+        
+    def extract_values(self, entries, time_from, time_until):
+        minutes = divmod((time_until - time_from).total_seconds(), 60)[0]
+
+        data = np.zeros(minutes)
+
+        for entry in entries:
+            entry_time = parser.parse(entry["dateString"])
+            minutes_since_beginn = divmod((entry_time - time_from).total_seconds(), 60)[0]
+            data[minutes_since_beginn] = entry["sgv"]
+
+        data = (data - np.min(data)) / (np.max(data) - np.min(data))
+
+        return data
+    
+    def build_graph(self, values):
+        canvas = Image.new("RGB", (500, 500), color="black")
+        draw = ImageDraw.Draw(canvas)
+
+        top_pad = 150
+        height_range = 300 # 50 bottom, 150 top
+        left_pad = 50
+        point_spacing = 2# assumption: 200 minutes in 400 pixels
+        
+        for count, value in enumerate(values):
+            if value != None and value != 0:
+                draw.ellipse(
+                    (   left_pad+(point_spacing*count)-1, 
+                        top_pad+(height_range-value)-1, 
+                        left_pad+(point_spacing*count)+1, 
+                        top_pad+(height_range-value)+1  ), 
+                    fill=self.get_color(value))
+
+        return canvas
+
     def on_tick(self):
         self.seconds_since_last_update += 1
 
-        if(self.seconds_since_last_update > 60):
-            self.plugin_base.backend.manual_update()
+        if(self.seconds_since_last_update > self.seconds_until_update):
+            self.seconds_since_last_update = 0
+            entries = self.plugin_base.NightscoutConnector.get_last_N_mins(
+                self.get_settings().get("nightscout_url"),
+                self.get_settings().get("nightscout_token"),
+                N=200
+            )
+            if entries != None:
+                if len(entries) > 0:
+                    self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]), font_size=20)
+                    entry_time = parser.parse(entries[0]["dateString"])
 
-        if self.plugin_base.backend is not None:
-            entries = self.plugin_base.backend.get_view()
-            if entries != None and entries != -1:
-                self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]), font_size=20)
-                entry_time = parser.parse(entries[0]["dateString"])
-                current_time = datetime.now(timezone.utc)
-                current_time = current_time.replace(microsecond=0)
-                #log.debug("Times: " + str(current_time) + " , " + str(entry_time))
-                time_delta_minutes = divmod((current_time - entry_time).total_seconds(), 60)[0]
-                self.set_top_label(str(int(time_delta_minutes)) + " m", font_size=16)
+                    current_time = datetime.now(timezone.utc)
+                    current_time = current_time.replace(microsecond=0)
+                    time_delta_minutes = divmod((current_time - entry_time).total_seconds(), 60)[0]
+                    self.set_top_label(str(int(time_delta_minutes)) + " m", font_size=16)
+
+                    time_from = time_from = datetime.now(timezone.utc) - timedelta(minutes=200)
+                    graph = self.build_graph(self.extract_values(entries, time_from, current_time))
+                    self.set_media(image=graph)
+                else:
+                    self.set_center_label("no data", font_size=18)
+                    self.set_top_label("")
+                    self.set_media(image=Image.new("RGB", (500, 500), color="black"))
             else:
                 self.set_center_label("no data", font_size=18)
                 self.set_top_label("")
+                self.set_media(image=Image.new("RGB", (500, 500), color="black"))
     
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()
@@ -111,27 +160,27 @@ class NightscoutGraph(ActionBase):
         return [self.nightscout_url, self.nightscout_token] #
 
     def load_config_values(self):
-        settings = self.plugin_base.get_settings()
+        settings = self.get_settings()
 
         settings.setdefault("nightscout_url", "http://localhost")
         settings.setdefault("nightscout_token", "")
-        self.plugin_base.set_settings(settings)
-        settings = self.plugin_base.get_settings()
+        self.set_settings(settings)
+        settings = self.get_settings()
 
         self.nightscout_url.set_text(settings.get("nightscout_url"))
         self.nightscout_token.set_text(settings.get("nightscout_token"))
 
     def on_url_value_changed(self, nightscout_url):
-        settings = self.plugin_base.get_settings()
+        settings = self.get_settings()
         settings["nightscout_url"] = str(nightscout_url.get_text())
-        self.plugin_base.set_settings(settings)
-        self.try_connection()
+        self.set_settings(settings)
+        self.update_status_label()
 
     def on_token_value_changed(self, nightscout_token):
-        settings = self.plugin_base.get_settings()
+        settings = self.get_settings()
         settings["nightscout_token"] = str(nightscout_token.get_text())
-        self.plugin_base.set_settings(settings)
-        self.try_connection()
+        self.set_settings(settings)
+        self.update_status_label()
 
 
 

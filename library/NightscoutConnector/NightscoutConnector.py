@@ -32,7 +32,7 @@ class NightscoutConnector:
             else:
                 return None
 
-    def get_last_N_mins(self, url="http://localhost", token="123", N=30):
+    def get_last_N_mins(self, url="http://localhost", token="123", N=200):
         if not url == None and not token == None:
             time_from = datetime.now(timezone.utc) - timedelta(minutes=N)
             time_until = datetime.now(timezone.utc)

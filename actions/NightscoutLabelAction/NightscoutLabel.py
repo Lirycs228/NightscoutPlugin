@@ -21,7 +21,8 @@ class NightscoutLabel(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.status_label = Gtk.Label(label="No Connection", css_classes=["bold", "red"])
-        self.seconds_since_last_update = 60
+        self.seconds_until_update = 30
+        self.seconds_since_last_update = self.seconds_until_update
     
     def update_status_label(self):
         if self.plugin_base.NightscoutConnector.has_connection(
@@ -67,7 +68,7 @@ class NightscoutLabel(ActionBase):
     def on_tick(self):
         self.seconds_since_last_update += 1
 
-        if(self.seconds_since_last_update > 60):
+        if(self.seconds_since_last_update > self.seconds_until_update):
             self.seconds_since_last_update = 0
             entry = self.plugin_base.NightscoutConnector.get_last_entry(
                 self.get_settings().get("nightscout_url"),
