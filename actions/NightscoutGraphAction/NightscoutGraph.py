@@ -103,7 +103,7 @@ class NightscoutGraph(ActionBase):
         left_pad = 50
         point_spacing = 2# assumption: 200 minutes in 400 pixels
 
-        data = data*height_range
+        values = values*height_range
         log.debug("Sum of values: " + str(np.sum(values)))
         
         for count, value in enumerate(values):
