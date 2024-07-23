@@ -30,6 +30,13 @@ Version 0.2.0
 
 ![Screenshot](store/Preview_0_2_0.png)
 
+Version 0.3.0
+
++ Add Treatment (carbs, insulin) indicators
++ Establish framework for other Nightscout data
+
+![Screenshot](store/Preview_0_3_0.png)
+
 ### Known Problems
 
 Having multiple view actions (Graph, Combined) on one page with both of them set to the same Nightscout instance can have one of them not load in correctly and take 30 seconds until the image appears. This is probably due to both view widgets querying the same Nightscout API for values and the API only responding to one.
