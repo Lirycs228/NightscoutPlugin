@@ -95,6 +95,7 @@ class NightscoutGraph(ActionBase):
         return data
     
     def build_graph(self, values):
+        log.debug("Sum of entries: " + str(np.sum(values)))
         canvas = Image.new("RGB", (500, 500), color="black")
         draw = ImageDraw.Draw(canvas)
 
