@@ -25,6 +25,9 @@ class NightscoutGraph(ActionBase):
         self.status_label = Gtk.Label(label="No Connection", css_classes=["bold", "red"])
         self.seconds_until_update = 30
         self.seconds_since_last_update = self.seconds_until_update
+
+        self.last_graph = None
+        self.last_worked = False
     
     def update_status_label(self):
         if self.plugin_base.NightscoutConnector.has_connection(
@@ -189,22 +192,27 @@ class NightscoutGraph(ActionBase):
                     time_from = time_from = datetime.now(timezone.utc) - timedelta(minutes=200)
                     graph = self.build_graph(self.extract_values(entries, time_from, current_time))
                     self.set_media(image=graph)
-
-                    # TREATMENTS
-                    treatments = self.plugin_base.NightscoutConnector.get_last_N_mins_treatments(
-                        self.get_settings().get("nightscout_url"),
-                        self.get_settings().get("nightscout_token"),
-                        N=200
-                    )
-                    if treatments != None:
-                        log.debug("TREATMENTS")
-                        if len(treatments) > 0:
-                            graph = self.add_treatments(graph, self.extract_treatments(treatments, time_from, current_time))
+                    self.last_graph = graph
+                    self.last_worked = True
                 else:
                     self.set_media(image=Image.new("RGB", (500, 500), color="black"))
+                    self.last_worked = False
             else:
                 self.set_media(image=Image.new("RGB", (500, 500), color="black"))
-    
+                self.last_worked = False
+            
+            # TREATMENTS
+            if self.last_worked and self.seconds_since_last_update > int(self.seconds_until_update/2):
+                treatments = self.plugin_base.NightscoutConnector.get_last_N_mins_treatments(
+                    self.get_settings().get("nightscout_url"),
+                    self.get_settings().get("nightscout_token"),
+                    N=200
+                )
+                if treatments != None:
+                    log.debug("TREATMENTS")
+                    if len(treatments) > 0:
+                        graph = self.add_treatments(graph, self.extract_treatments(treatments, time_from, current_time))
+
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()
         self.nightscout_url.set_title("URL of the Nightscout Instance with http(s)://")
