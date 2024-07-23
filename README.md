@@ -3,7 +3,10 @@
 This is simple little Project to show the current Nightscout Value and its Trend
 on a Button for StreamController
 
-It is still being developed
+!!It is still being developed so expect the Plugin to sometimes crash your setup!!
+
+Due to the way testing the plugin currently works, it is only possible to have 
+the breaking commits in the master branch. Sorry!
 
 ### Features
 
