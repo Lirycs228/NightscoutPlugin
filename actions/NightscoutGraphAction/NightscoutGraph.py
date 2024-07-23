@@ -110,11 +110,13 @@ class NightscoutGraph(ActionBase):
         
         for count, value in enumerate(values):
             if value != None and value != 0:
-                draw.ellipse(
-                    (   left_pad+(point_spacing*count)-1, 
+                position = (   left_pad+(point_spacing*count)-1, 
                         top_pad+(height_range-value)-1, 
                         left_pad+(point_spacing*count)+1, 
-                        top_pad+(height_range-value)+1  ), 
+                        top_pad+(height_range-value)+1  )
+                print(position)
+                draw.ellipse(
+                    position, 
                     fill=self.get_color(value))
 
         return canvas
