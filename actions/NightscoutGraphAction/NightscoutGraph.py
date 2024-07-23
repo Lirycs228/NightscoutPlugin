@@ -105,6 +105,8 @@ class NightscoutGraph(ActionBase):
 
         values = values*height_range
         log.debug("Sum of values: " + str(np.sum(values)))
+
+        draw.line((0, 0, 500, 500), fill="blue", width=3)
         
         for count, value in enumerate(values):
             if value != None and value != 0:
