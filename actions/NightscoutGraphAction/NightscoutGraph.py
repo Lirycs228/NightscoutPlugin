@@ -95,7 +95,6 @@ class NightscoutGraph(ActionBase):
         return data
     
     def build_graph(self, values):
-        log.debug("Sum of entries: " + str(np.sum(values)))
         canvas = Image.new("RGB", (500, 500), color="black")
         draw = ImageDraw.Draw(canvas)
 
@@ -103,6 +102,9 @@ class NightscoutGraph(ActionBase):
         height_range = 300 # 50 bottom, 150 top
         left_pad = 50
         point_spacing = 2# assumption: 200 minutes in 400 pixels
+
+        data = data*height_range
+        log.debug("Sum of values: " + str(np.sum(values)))
         
         for count, value in enumerate(values):
             if value != None and value != 0:
