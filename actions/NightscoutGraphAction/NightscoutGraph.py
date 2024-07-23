@@ -82,7 +82,7 @@ class NightscoutGraph(ActionBase):
     def extract_values(self, entries, time_from, time_until):
         minutes = divmod((time_until - time_from).total_seconds(), 60)[0]
 
-        data = np.zeros(minutes)
+        data = np.zeros(int(minutes))
 
         for entry in entries:
             entry_time = parser.parse(entry["dateString"])
