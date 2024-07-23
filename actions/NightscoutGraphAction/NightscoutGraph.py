@@ -114,8 +114,8 @@ class NightscoutGraph(ActionBase):
         left_pad = 50
         point_spacing = 2# assumption: 200 minutes in 400 pixels
 
-        values[:, 0] = np.clip(values[:, 0], 0, 50)
-        values[:, 1] = np.clip(values[:, 1], 0, 50)
+        values[:, 0] = np.clip(values[:, 0], 0, 30)
+        values[:, 1] = np.clip(values[:, 1], 0, 30)
 
         for count, value in enumerate(values):
             if value[0] != None and value[0] > 0:
@@ -124,7 +124,7 @@ class NightscoutGraph(ActionBase):
                     left_pad+(point_spacing*count), 
                     top_pad+height_range, 
                     left_pad+(point_spacing*count), 
-                    top_pad+height_range-((value[0]/5)*2)
+                    top_pad+height_range-((value[0]/5)*3+10)
                     ), fill=(102, 178, 255), width=10)
             if value[1] != None and value[1] > 0:
                 # insulin
@@ -132,7 +132,7 @@ class NightscoutGraph(ActionBase):
                     left_pad+(point_spacing*count), 
                     top_pad, 
                     left_pad+(point_spacing*count), 
-                    top_pad+(value[1]*2)
+                    top_pad+(value[1]*3+10)
                     ), fill=(102, 178, 255), width=10)
                     
         return graph
