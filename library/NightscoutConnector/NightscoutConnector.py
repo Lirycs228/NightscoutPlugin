@@ -2,7 +2,7 @@ import requests
 from datetime import datetime, timedelta, timezone
 from loguru import logger as log
 
-class NightscoutConnector(Object):
+class NightscoutConnector:
     def __init__(self):
         super().__init__()
 
