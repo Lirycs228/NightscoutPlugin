@@ -212,6 +212,9 @@ class NightscoutGraph(ActionBase):
             if treatments != None:
                 log.debug("TREATMENTS")
                 if len(treatments) > 0:
+                    current_time = datetime.now(timezone.utc)
+                    current_time = current_time.replace(microsecond=0)
+                    time_from = time_from = datetime.now(timezone.utc) - timedelta(minutes=200)
                     graph = self.add_treatments(self.last_graph, self.extract_treatments(treatments, time_from, current_time))
                     self.set_media(image=graph)
 
