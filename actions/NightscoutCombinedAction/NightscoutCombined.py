@@ -96,7 +96,7 @@ class NightscoutCombined(ActionBase):
         canvas = Image.new("RGB", (500, 500), color="black")
         draw = ImageDraw.Draw(canvas)
 
-        top_pad = 200
+        top_pad = 160
         height_range = 200 # 50 bottom, 150 top
         left_pad = 50
         point_spacing = 2# assumption: 200 minutes in 400 pixels
@@ -107,7 +107,7 @@ class NightscoutCombined(ActionBase):
 
         draw.line((left_pad, top_pad, 500-left_pad, top_pad), fill=(150, 150, 150), width=3)
         draw.line((left_pad, top_pad+height_range, 500-left_pad, top_pad+height_range), fill=(150, 150, 150), width=3)
-        draw.line((left_pad, top_pad+height_range - 100*(height_range/200), 500-left_pad, top_pad+height_range - 100*(height_range/200)), fill=(150, 150, 150), width=3)
+        draw.line((left_pad, top_pad+height_range - 100*(height_range/300), 500-left_pad, top_pad+height_range - 100*(height_range/300)), fill=(150, 150, 150), width=3)
         
         for count, (value, datum) in enumerate(zip(values, data)):
             if value != None and value != 0:
@@ -146,12 +146,10 @@ class NightscoutCombined(ActionBase):
                         graph = self.build_graph(self.extract_values(entries, time_from, current_time))
                         self.set_media(image=graph)
                 else:
-                    print("no entries")
                     self.set_top_label("no data", font_size=18)
                     self.set_bottom_label("")
                     self.set_media(image=Image.new("RGB", (500, 500), color="black"))
             else:
-                print("entries None")
                 self.set_top_label("no data", font_size=18)
                 self.set_bottom_label("")
                 self.set_media(image=Image.new("RGB", (500, 500), color="black"))
