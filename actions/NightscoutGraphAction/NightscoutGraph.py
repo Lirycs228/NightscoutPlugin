@@ -197,6 +197,7 @@ class NightscoutGraph(ActionBase):
                         N=200
                     )
                     if treatments != None:
+                        log.debug("TREATMENTS")
                         if len(treatments) > 0:
                             graph = self.add_treatments(graph, self.extract_treatments(treatments, time_from, current_time))
                 else:
