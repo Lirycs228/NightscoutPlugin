@@ -102,6 +102,7 @@ class NightscoutGraph(ActionBase):
         height_range = 300 # 50 bottom, 150 top
         left_pad = 50
         point_spacing = 2# assumption: 200 minutes in 400 pixels
+        radius = 5
 
         values = values*height_range
         log.debug("Sum of values: " + str(np.sum(values)))
@@ -110,10 +111,10 @@ class NightscoutGraph(ActionBase):
         
         for count, value in enumerate(values):
             if value != None and value != 0:
-                position = (   left_pad+(point_spacing*count)-1, 
-                        top_pad+(height_range-int(value))-1, 
-                        left_pad+(point_spacing*count)+1, 
-                        top_pad+(height_range-int(value))+1  )
+                position = (   left_pad+(point_spacing*count)-radius, 
+                        top_pad+(height_range-int(value))-radius, 
+                        left_pad+(point_spacing*count)+radius, 
+                        top_pad+(height_range-int(value))+radius  )
                 print(position)
                 draw.ellipse(
                     position, 
