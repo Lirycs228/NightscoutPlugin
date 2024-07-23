@@ -17,14 +17,17 @@ gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw 
 
 
-class Nightscout(ActionBase):
+class NightscoutLabel(ActionBase):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.status_label = Gtk.Label(label="No Connection", css_classes=["bold", "red"])
-        self.seconds_since_last_update = 0
+        self.seconds_since_last_update = 60
     
     def update_status_label(self):
-        if self.plugin_base.backend.get_connected():
+        if self.plugin_base.NightscoutConnector.has_connection(
+            self.get_settings().get("nightscout_url"),
+            self.get_settings().get("nightscout_token")
+        ):
             self.status_label.set_label("Connected")
             self.status_label.remove_css_class("red")
             self.status_label.add_css_class("green")
@@ -36,28 +39,13 @@ class Nightscout(ActionBase):
     def get_custom_config_area(self):
         self.update_status_label()
         return self.status_label
-    
-    def try_connection(self):
-        try:
-            self.plugin_base.backend.try_connect(
-                url=self.plugin_base.get_settings().get("nightscout_url"),
-                token=self.plugin_base.get_settings().get("nightscout_token")
-            )
-            self.update_status_label()
-        except Exception as e:
-            log.error(e)
-            self.show_error()
-            self.update_status_label()
-            return
 
     def on_ready(self):
-        if self.plugin_base.backend is not None:
-            if not self.plugin_base.backend.get_connected():
-                self.try_connection()
-            self.plugin_base.backend.manual_update()
-    
-    def on_key_down(self):
-        self.plugin_base.backend.manual_update()
+        if not self.plugin_base.NightscoutConnector.has_connection(
+            self.get_settings().get("nightscout_url"),
+            self.get_settings().get("nightscout_token")
+        ):
+            self.update_status_label()
     
     def direction_to_arrow(self, direction):
         match direction:
@@ -80,13 +68,13 @@ class Nightscout(ActionBase):
         self.seconds_since_last_update += 1
 
         if(self.seconds_since_last_update > 60):
-            self.plugin_base.backend.manual_update()
-
-        if self.plugin_base.backend is not None:
-            entries = self.plugin_base.backend.get_view()
-            if entries != None and entries != -1:
-                self.set_center_label(str(entries[0]["sgv"]) + " " + self.direction_to_arrow(entries[0]["direction"]), font_size=20)
-                entry_time = parser.parse(entries[0]["dateString"])
+            entry = self.plugin_base.NightscoutConnector.get_last_entry(
+                self.get_settings().get("nightscout_url"),
+                self.get_settings().get("nightscout_token")
+            )
+            if entry != None:
+                self.set_center_label(str(entry["sgv"]) + " " + self.direction_to_arrow(entry["direction"]), font_size=20)
+                entry_time = parser.parse(entry["dateString"])
                 current_time = datetime.now(timezone.utc)
                 current_time = current_time.replace(microsecond=0)
                 #log.debug("Times: " + str(current_time) + " , " + str(entry_time))
@@ -111,27 +99,27 @@ class Nightscout(ActionBase):
         return [self.nightscout_url, self.nightscout_token] #
 
     def load_config_values(self):
-        settings = self.plugin_base.get_settings()
+        settings = self.get_settings()
 
         settings.setdefault("nightscout_url", "http://localhost")
         settings.setdefault("nightscout_token", "")
-        self.plugin_base.set_settings(settings)
-        settings = self.plugin_base.get_settings()
+        self.set_settings(settings)
+        settings = self.get_settings()
 
         self.nightscout_url.set_text(settings.get("nightscout_url"))
         self.nightscout_token.set_text(settings.get("nightscout_token"))
 
     def on_url_value_changed(self, nightscout_url):
-        settings = self.plugin_base.get_settings()
+        settings = self.get_settings()
         settings["nightscout_url"] = str(nightscout_url.get_text())
-        self.plugin_base.set_settings(settings)
-        self.try_connection()
+        self.set_settings(settings)
+        self.update_status_label()
 
     def on_token_value_changed(self, nightscout_token):
-        settings = self.plugin_base.get_settings()
+        settings = self.get_settings()
         settings["nightscout_token"] = str(nightscout_token.get_text())
-        self.plugin_base.set_settings(settings)
-        self.try_connection()
+        self.set_settings(settings)
+        self.update_status_label()
 
 
 
