@@ -201,19 +201,19 @@ class NightscoutGraph(ActionBase):
                 self.set_media(image=Image.new("RGB", (500, 500), color="black"))
                 self.last_worked = False
             
-            # TREATMENTS
-            if self.last_worked and self.seconds_since_last_update > 10:
-                treatments = self.plugin_base.NightscoutConnector.get_last_N_mins_treatments(
-                    self.get_settings().get("nightscout_url"),
-                    self.get_settings().get("nightscout_token"),
-                    N=200
-                )
-                log.debug("TRY TREATMENTS")
-                if treatments != None:
-                    log.debug("TREATMENTS")
-                    if len(treatments) > 0:
-                        graph = self.add_treatments(graph, self.extract_treatments(treatments, time_from, current_time))
-                        self.set_media(image=graph)
+        # TREATMENTS
+        if self.last_worked and self.seconds_since_last_update > 10:
+            treatments = self.plugin_base.NightscoutConnector.get_last_N_mins_treatments(
+                self.get_settings().get("nightscout_url"),
+                self.get_settings().get("nightscout_token"),
+                N=200
+            )
+            log.debug("TRY TREATMENTS")
+            if treatments != None:
+                log.debug("TREATMENTS")
+                if len(treatments) > 0:
+                    graph = self.add_treatments(graph, self.extract_treatments(treatments, time_from, current_time))
+                    self.set_media(image=graph)
 
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()
