@@ -208,6 +208,7 @@ class NightscoutGraph(ActionBase):
                     self.get_settings().get("nightscout_token"),
                     N=200
                 )
+                log.debug("TRY TREATMENTS")
                 if treatments != None:
                     log.debug("TREATMENTS")
                     if len(treatments) > 0:
