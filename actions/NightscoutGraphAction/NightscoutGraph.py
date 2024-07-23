@@ -206,7 +206,7 @@ class NightscoutGraph(ActionBase):
                 self.get_settings().get("nightscout_token"),
                 N=200
             )
-            self.last_treatments = self.last_treatments
+            self.last_treatments = treatments
 
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()
