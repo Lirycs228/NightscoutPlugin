@@ -113,7 +113,6 @@ class NightscoutGraph(ActionBase):
         height_range = 300 # 50 bottom, 150 top
         left_pad = 50
         point_spacing = 2# assumption: 200 minutes in 400 pixels
-        radius = 8
 
         values[:, 0] = np.clip(values[:, 0], 0, 50)
         values[:, 1] = np.clip(values[:, 1], 0, 50)
@@ -129,7 +128,6 @@ class NightscoutGraph(ActionBase):
                     ), fill=(102, 178, 255), width=10)
             if value[1] != None and value[1] > 0:
                 # insulin
-                print(value[1])
                 draw.line((
                     left_pad+(point_spacing*count), 
                     top_pad, 
@@ -137,7 +135,6 @@ class NightscoutGraph(ActionBase):
                     top_pad+(value[1]*2+10)
                     ), fill=(102, 178, 255), width=10)
                     
-
         return graph
     
     def build_graph(self, values):
@@ -185,13 +182,18 @@ class NightscoutGraph(ActionBase):
                     current_time = current_time.replace(microsecond=0)
                     time_from = time_from = datetime.now(timezone.utc) - timedelta(minutes=200)
                     graph = self.build_graph(self.extract_values(entries, time_from, current_time))
-                    self.set_media(image=graph)
+
                     self.last_graph = graph
                     self.last_worked = True
+
                     if self.last_treatments != None:
                         if len(self.last_treatments) > 0:
-                            graph = self.add_treatments(self.last_graph, self.extract_treatments(self.last_treatments, time_from, current_time))
+                            graph = self.add_treatments(graph, self.extract_treatments(self.last_treatments, time_from, current_time))
                             self.set_media(image=graph)
+                        else:
+                            self.set_media(image=graph)
+                    else:
+                        self.set_media(image=graph)
                 else:
                     self.set_media(image=Image.new("RGB", (500, 500), color="black"))
                     self.last_worked = False

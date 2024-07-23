@@ -25,6 +25,10 @@ class NightscoutCombined(ActionBase):
         self.status_label = Gtk.Label(label="No Connection", css_classes=["bold", "red"])
         self.seconds_until_update = 30
         self.seconds_since_last_update = self.seconds_until_update
+
+        self.last_graph = None
+        self.last_worked = False
+        self.last_treatments = None
     
     def update_status_label(self):
         if self.plugin_base.NightscoutConnector.has_connection(
@@ -79,6 +83,48 @@ class NightscoutCombined(ActionBase):
             return "yellow"
         else:
             return "red"
+        
+    def extract_treatments(self, treatments, time_from, time_until):
+        data = np.zeros((200, 2))
+
+        for treat in treatments:
+            entry_time = parser.parse(treat["created_at"])
+            minutes_since_beginn = divmod((entry_time - time_from).total_seconds(), 60)[0]
+            data[int(minutes_since_beginn)][0] = treat["carbs"]
+            data[int(minutes_since_beginn)][1] = treat["insulin"]
+
+        return data
+    
+    def add_treatments(self, graph, values):
+        draw = ImageDraw.Draw(graph)
+
+        top_pad = 160
+        height_range = 200 # 50 bottom, 150 top
+        left_pad = 50
+        point_spacing = 2# assumption: 200 minutes in 400 pixels
+
+        values[:, 0] = np.clip(values[:, 0], 0, 50)
+        values[:, 1] = np.clip(values[:, 1], 0, 50)
+
+        for count, value in enumerate(values):
+            if value[0] != None and value[0] > 0:
+                # carbs
+                draw.line((
+                    left_pad+(point_spacing*count), 
+                    top_pad+height_range, 
+                    left_pad+(point_spacing*count), 
+                    top_pad+height_range-(value[0]*2+10)
+                    ), fill=(102, 178, 255), width=10)
+            if value[1] != None and value[1] > 0:
+                # insulin
+                draw.line((
+                    left_pad+(point_spacing*count), 
+                    top_pad, 
+                    left_pad+(point_spacing*count), 
+                    top_pad+(value[1]*2+10)
+                    ), fill=(102, 178, 255), width=10)
+                    
+        return graph
         
     def extract_values(self, entries, time_from, time_until):
         minutes = divmod((time_until - time_from).total_seconds(), 60)[0]
@@ -145,7 +191,18 @@ class NightscoutCombined(ActionBase):
 
                         time_from = time_from = datetime.now(timezone.utc) - timedelta(minutes=200)
                         graph = self.build_graph(self.extract_values(entries, time_from, current_time))
-                        self.set_media(image=graph)
+                        
+                        self.last_graph = graph
+                        self.last_worked = True
+
+                        if self.last_treatments != None:
+                            if len(self.last_treatments) > 0:
+                                graph = self.add_treatments(graph, self.extract_treatments(self.last_treatments, time_from, current_time))
+                                self.set_media(image=graph)
+                            else:
+                                self.set_media(image=graph)
+                        else:
+                            self.set_media(image=graph)
                 else:
                     self.set_top_label("no data", font_size=18)
                     self.set_bottom_label("")
@@ -154,6 +211,15 @@ class NightscoutCombined(ActionBase):
                 self.set_top_label("no data", font_size=18)
                 self.set_bottom_label("")
                 self.set_media(image=Image.new("RGB", (500, 500), color="black"))
+
+        # TREATMENTS
+        if self.last_worked and self.seconds_since_last_update == 10:
+            treatments = self.plugin_base.NightscoutConnector.get_last_N_mins_treatments(
+                self.get_settings().get("nightscout_url"),
+                self.get_settings().get("nightscout_token"),
+                N=200
+            )
+            self.last_treatments = treatments
     
     def get_config_rows(self) -> list:
         self.nightscout_url = Adw.EntryRow()
