@@ -202,7 +202,7 @@ class NightscoutGraph(ActionBase):
                 self.last_worked = False
             
         # TREATMENTS
-        if self.last_worked and self.seconds_since_last_update > 10:
+        if self.last_worked and self.seconds_since_last_update == 10:
             treatments = self.plugin_base.NightscoutConnector.get_last_N_mins_treatments(
                 self.get_settings().get("nightscout_url"),
                 self.get_settings().get("nightscout_token"),
