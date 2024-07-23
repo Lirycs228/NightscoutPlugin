@@ -124,18 +124,20 @@ class NightscoutGraph(ActionBase):
                     # carbs
                     draw.line((
                         left_pad+(point_spacing*count), 
-                        top_pad, 
+                        top_pad+height_range, 
                         left_pad+(point_spacing*count), 
-                        top_pad+value[0]
+                        top_pad+height_range-value[0]
                         ), fill=(0, 0, 255), width=5)
                 if value[1] > 0 and value[1] != None:
                     # insulin
+                    print(value[1])
                     draw.line((
                         left_pad+(point_spacing*count), 
-                        top_pad+height_range, 
+                        top_pad, 
                         left_pad+(point_spacing*count), 
-                        top_pad+height_range-value[1]
+                        top_pad+value[1]
                         ), fill=(0, 0, 255), width=5)
+                    
 
         return graph
     
