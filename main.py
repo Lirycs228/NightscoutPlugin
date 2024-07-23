@@ -5,6 +5,7 @@ from src.backend.PluginManager.ActionHolder import ActionHolder
 # Import actions
 from .actions.NightscoutLabelAction.NightscoutLabel import NightscoutLabel
 from .actions.NightscoutGraphAction.NightscoutGraph import NightscoutGraph
+from .actions.NightscoutCombinedAction.NightscoutCombined import NightscoutCombined
 
 # Import Library Objects
 from .library.NightscoutConnector.NightscoutConnector import NightscoutConnector
@@ -33,6 +34,14 @@ class PluginTemplate(PluginBase):
             action_base = NightscoutGraph,
             action_id = "dev_lirycs_NightscoutViewer::NightscoutGraph", # Change this to your own plugin id
             action_name = "Nightscout Graph",
+        )
+        self.add_action_holder(self.nightscout_graph_action_holder)
+
+        self.nightscout_combined_action_holder = ActionHolder(
+            plugin_base = self,
+            action_base = NightscoutCombined,
+            action_id = "dev_lirycs_NightscoutViewer::NightscoutCombined", # Change this to your own plugin id
+            action_name = "Nightscout Combined",
         )
         self.add_action_holder(self.nightscout_graph_action_holder)
 
