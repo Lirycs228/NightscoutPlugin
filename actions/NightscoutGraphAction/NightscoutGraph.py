@@ -104,9 +104,10 @@ class NightscoutGraph(ActionBase):
 
         data = np.clip(values, 0, 300)
 
-        draw.line((0, top_pad, 500, top_pad), fill=(150, 150, 150), width=3)
-        draw.line((0, top_pad+height_range, 500, top_pad+height_range), fill=(150, 150, 150), width=3)
-        draw.line((0, top_pad+height_range-100, 500, top_pad+height_range-100), fill=(150, 0, 0), width=3)
+        draw.line((left_pad, top_pad, 500-left_pad, top_pad), fill=(150, 150, 150), width=3)
+        draw.line((left_pad, top_pad+height_range, 500-left_pad, top_pad+height_range), fill=(150, 150, 150), width=3)
+        draw.line((left_pad, top_pad+height_range-100, 500-left_pad, top_pad+height_range-100), fill=(0, 150, 0), width=3)
+        draw.line((500-left_pad, top_pad, 500-left_pad, top_pad+height_range), fill=(150, 150, 150), width=3)
         
         for count, (value, data) in enumerate(zip(values, data)):
             if value != None and value != 0:
