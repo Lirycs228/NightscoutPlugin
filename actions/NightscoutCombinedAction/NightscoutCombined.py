@@ -146,10 +146,12 @@ class NightscoutCombined(ActionBase):
                         graph = self.build_graph(self.extract_values(entries, time_from, current_time))
                         self.set_media(image=graph)
                 else:
+                    print("no entries")
                     self.set_top_label("no data", font_size=18)
                     self.set_bottom_label("")
                     self.set_media(image=Image.new("RGB", (500, 500), color="black"))
             else:
+                print("entries None")
                 self.set_top_label("no data", font_size=18)
                 self.set_bottom_label("")
                 self.set_media(image=Image.new("RGB", (500, 500), color="black"))
