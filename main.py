@@ -43,7 +43,7 @@ class PluginTemplate(PluginBase):
             action_id = "dev_lirycs_NightscoutViewer::NightscoutCombined", # Change this to your own plugin id
             action_name = "Nightscout Combined",
         )
-        self.add_action_holder(self.nightscout_graph_action_holder)
+        self.add_action_holder(self.nightscout_combined_action_holder)
 
 
         # Register plugin
