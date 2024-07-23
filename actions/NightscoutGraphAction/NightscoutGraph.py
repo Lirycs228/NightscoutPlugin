@@ -124,24 +124,23 @@ class NightscoutGraph(ActionBase):
         log.debug("treats: " + str(values))
 
         for count, value in enumerate(values):
-            if value != None and value != 0:
-                if value[0] > 0 and value[0] != None:
-                    # carbs
-                    draw.line((
-                        left_pad+(point_spacing*count), 
-                        top_pad+height_range, 
-                        left_pad+(point_spacing*count), 
-                        top_pad+height_range-(value[0]*2+10)
-                        ), fill=(0, 0, 255), width=5)
-                if value[1] > 0 and value[1] != None:
-                    # insulin
-                    print(value[1])
-                    draw.line((
-                        left_pad+(point_spacing*count), 
-                        top_pad, 
-                        left_pad+(point_spacing*count), 
-                        top_pad+(value[1]*2+10)
-                        ), fill=(0, 0, 255), width=5)
+            if value[0] != None and value[0] > 0:
+                # carbs
+                draw.line((
+                    left_pad+(point_spacing*count), 
+                    top_pad+height_range, 
+                    left_pad+(point_spacing*count), 
+                    top_pad+height_range-(value[0]*2+10)
+                    ), fill=(0, 0, 255), width=5)
+            if value[1] != None and value[1] > 0:
+                # insulin
+                print(value[1])
+                draw.line((
+                    left_pad+(point_spacing*count), 
+                    top_pad, 
+                    left_pad+(point_spacing*count), 
+                    top_pad+(value[1]*2+10)
+                    ), fill=(0, 0, 255), width=5)
                     
 
         return graph
