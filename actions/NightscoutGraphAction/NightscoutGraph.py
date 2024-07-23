@@ -98,17 +98,18 @@ class NightscoutGraph(ActionBase):
         canvas = Image.new("RGB", (500, 500), color="black")
         draw = ImageDraw.Draw(canvas)
 
-        top_pad = 150
-        height_range = 300 # 50 bottom, 150 top
+        top_pad = 250
+        height_range = 200 # 50 bottom, 150 top
         left_pad = 50
         point_spacing = 2# assumption: 200 minutes in 400 pixels
-        radius = 5
+        radius = 8
 
         values = values*height_range
         log.debug("Sum of values: " + str(np.sum(values)))
         log.debug("Numpy array: " + str(values))
 
-        draw.line((0, 0, 500, 500), fill="blue", width=3)
+        draw.line((0, top_pad, 500, top_pad), fill=(100, 100, 100), width=3)
+        draw.line((0, top_pad+height_range, 500, top_pad+height_range), fill=(100, 100, 100), width=3)
         
         for count, value in enumerate(values):
             if value != None and value != 0:
