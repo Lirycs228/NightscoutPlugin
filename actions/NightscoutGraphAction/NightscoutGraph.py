@@ -124,7 +124,7 @@ class NightscoutGraph(ActionBase):
                     left_pad+(point_spacing*count), 
                     top_pad+height_range, 
                     left_pad+(point_spacing*count), 
-                    top_pad+height_range-(value[0]*2)
+                    top_pad+height_range-((value[0]/5)*2)
                     ), fill=(102, 178, 255), width=10)
             if value[1] != None and value[1] > 0:
                 # insulin
