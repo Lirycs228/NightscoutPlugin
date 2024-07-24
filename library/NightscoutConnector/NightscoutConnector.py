@@ -116,7 +116,7 @@ class NightscoutConnector:
         draw.line((left_pad, top_pad+height_range - 100*(height_range/300), 500-left_pad, top_pad+height_range - 100*(height_range/300)), fill=(200, 255, 200), width=3)
         
         index_minutes_rightbound = datetime.now(timezone.utc).minute*2
-        while index_minutes_rightbound < 400:
+        while index_minutes_rightbound <= 400:
             self._dotted_vertical_line(draw, 
                                        left_pad+400-index_minutes_rightbound, 
                                        top_pad, 

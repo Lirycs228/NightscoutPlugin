@@ -28,14 +28,21 @@ Version 0.2.0
 + Add Nightscout instance per action
 + Add colorized plot on image views
 
-![Screenshot](store/Preview_0_2_0.png)
+![Screenshot Version 0.2.0](store/Preview_0_2_0.png)
 
 Version 0.3.0
 
 + Add Treatment (carbs at the bottom, insulin on top) indicators
 + Establish framework for other Nightscout data
 
-![Screenshot](store/Preview_0_3_0.png)
+![Screenshot Version 0.3.0](store/Preview_0_3_0.png)
+
+Version 0.4.0
+
++ Refactor Action Code
++ Add Hour Indicators
+
+![Screenshot Version 0.4.0](store/Preview_0_4_0.png)
 
 ### Known Problems
 
