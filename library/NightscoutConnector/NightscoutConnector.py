@@ -115,14 +115,14 @@ class NightscoutConnector:
         draw.line((left_pad, top_pad+height_range, 500-left_pad, top_pad+height_range), fill=(200, 200, 200), width=3)
         draw.line((left_pad, top_pad+height_range - 100*(height_range/300), 500-left_pad, top_pad+height_range - 100*(height_range/300)), fill=(200, 255, 200), width=3)
         
-        index_minutes_rightbound = datetime.now(timezone.utc).minute
-        while index_minutes_rightbound < 200:
+        index_minutes_rightbound = datetime.now(timezone.utc).minute*2
+        while index_minutes_rightbound < 400:
             self._dotted_vertical_line(draw, 
-                                       left_pad+200-index_minutes_rightbound, 
+                                       left_pad+400-index_minutes_rightbound, 
                                        top_pad, 
                                        top_pad+height_range, 
                                        (200, 200, 200), 3, 10)
-            index_minutes_rightbound += 60
+            index_minutes_rightbound += 60*2
 
         for count, (value, datum) in enumerate(zip(values, data)):
             if value != None and value != 0:
