@@ -71,6 +71,5 @@ Having multiple view actions (Graph, Combined) on one page with both of them set
 ### TODO
 
 + Expose more Settings
-+ Take other Data from Nightscout into Account(Profiles, Food, Insulin, Predictions)
++ Take other Data from Nightscout into Account(Profiles, Predictions)
 + Add visual Alerts (Red font, flashing)
-+ Add hour indicators on graph
