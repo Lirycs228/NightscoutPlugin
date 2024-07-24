@@ -49,23 +49,6 @@ class NightscoutLabel(ActionBase):
             self.update_status_label()
         self.seconds_since_last_update = 100
     
-    def direction_to_arrow(self, direction):
-        match direction:
-            case "Flat":
-                return "\u279E" # right
-            case "FortyFiveUp":
-                return "\u2B08" # up-right
-            case "FortyFiveDown":
-                return "\u2B0A" # down-right
-            case "SingleUp":
-                return "\u2191" # up
-            case "DoubleUp":
-                return "\u21D1" # doubble-up
-            case "SingleDown":
-                return "\u2193" # down
-            case "DoubleDown":
-                return "\u21D3" # doubble-down
-    
     def on_tick(self):
         self.seconds_since_last_update += 1
 
@@ -77,7 +60,7 @@ class NightscoutLabel(ActionBase):
             )
             if entry != None:
                 if entry["type"] == "sgv":
-                    self.set_center_label(str(entry["sgv"]) + " " + self.direction_to_arrow(entry["direction"]), font_size=20)
+                    self.set_center_label(str(entry["sgv"]) + " " + self.plugin_base.NightscoutConnector.direction_to_arrow(entry["direction"]), font_size=20)
                     entry_time = parser.parse(entry["dateString"])
                     current_time = datetime.now(timezone.utc)
                     current_time = current_time.replace(microsecond=0)
