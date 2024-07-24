@@ -39,7 +39,7 @@ class NightscoutConnector:
             return "red"
         
     def extract_treatments(self, treatments, time_from):
-        data = np.zeros((200, 2))
+        data = np.zeros((200, 2)) # [carbs, insulin]
 
         for treat in treatments:
             entry_time = parser.parse(treat["created_at"])
@@ -80,15 +80,25 @@ class NightscoutConnector:
         return graph
         
     def extract_values(self, entries, time_from):
-        data = np.zeros(200)
+        data = np.zeros((200, 2)) # [value, is_hour_mark]
 
         for entry in entries:
             if entry["type"] == "sgv":
                 entry_time = parser.parse(entry["dateString"])
                 minutes_since_beginn = divmod((entry_time - time_from).total_seconds(), 60)[0]
-                data[int(minutes_since_beginn)] = entry["sgv"]
+                data[int(minutes_since_beginn)][0] = entry["sgv"]
 
         return data
+    
+    def _dotted_vertical_line(self, draw, x, top, bottom, fill_color, line_width, segment_size):
+        index = 0
+        while index+segment_size < bottom-top:
+            draw.line((x,
+                       top+index,
+                       x,
+                       top+index+segment_size), 
+                       fill=fill_color, width=line_width)
+            index += segment_size*2
     
     def build_graph(self, values, top_pad=100, height_range=300):
         canvas = Image.new("RGB", (500, 500), color="black")
@@ -101,10 +111,19 @@ class NightscoutConnector:
         data = np.clip(values, 0, 300)
         data = data * (height_range/300)
 
-        draw.line((left_pad, top_pad, 500-left_pad, top_pad), fill=(150, 150, 150), width=3)
-        draw.line((left_pad, top_pad+height_range, 500-left_pad, top_pad+height_range), fill=(150, 150, 150), width=3)
-        draw.line((left_pad, top_pad+height_range - 100*(height_range/300), 500-left_pad, top_pad+height_range - 100*(height_range/300)), fill=(150, 150, 150), width=3)
+        draw.line((left_pad, top_pad, 500-left_pad, top_pad), fill=(200, 200, 200), width=3)
+        draw.line((left_pad, top_pad+height_range, 500-left_pad, top_pad+height_range), fill=(200, 200, 200), width=3)
+        draw.line((left_pad, top_pad+height_range - 100*(height_range/300), 500-left_pad, top_pad+height_range - 100*(height_range/300)), fill=(200, 255, 200), width=3)
         
+        index_minutes_rightbound = datetime.now(timezone.utc).minute
+        while index_minutes_rightbound < 200:
+            self._dotted_vertical_line(draw, 
+                                       left_pad+200-index_minutes_rightbound, 
+                                       top_pad, 
+                                       top_pad+height_range, 
+                                       (200, 200, 200), 3, 10)
+            index_minutes_rightbound += 60
+
         for count, (value, datum) in enumerate(zip(values, data)):
             if value != None and value != 0:
                 position = (   left_pad+(point_spacing*count)-radius, 
