@@ -86,7 +86,7 @@ class NightscoutConnector:
             if entry["type"] == "sgv":
                 entry_time = parser.parse(entry["dateString"])
                 minutes_since_beginn = divmod((entry_time - time_from).total_seconds(), 60)[0]
-                data[int(minutes_since_beginn)][0] = entry["sgv"]
+                data[int(minutes_since_beginn)] = entry["sgv"]
 
         return data
     
