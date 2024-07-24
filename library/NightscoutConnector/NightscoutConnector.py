@@ -80,7 +80,7 @@ class NightscoutConnector:
         return graph
         
     def extract_values(self, entries, time_from):
-        data = np.zeros((200, 2)) # [value, is_hour_mark]
+        data = np.zeros(200)
 
         for entry in entries:
             if entry["type"] == "sgv":
