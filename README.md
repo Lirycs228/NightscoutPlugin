@@ -32,7 +32,7 @@ Version 0.2.0
 
 Version 0.3.0
 
-+ Add Treatment (carbs, insulin) indicators
++ Add Treatment (carbs at the bottom, insulin on top) indicators
 + Establish framework for other Nightscout data
 
 ![Screenshot](store/Preview_0_3_0.png)
@@ -66,3 +66,4 @@ Having multiple view actions (Graph, Combined) on one page with both of them set
 + Expose more Settings
 + Take other Data from Nightscout into Account(Profiles, Food, Insulin, Predictions)
 + Add visual Alerts (Red font, flashing)
++ Add hour indicators on graph
