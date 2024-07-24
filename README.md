@@ -3,7 +3,7 @@
 ![Logo](store/banner_name.png)
 
 This is simple little project to show the current Nightscout value and its trend
-on a button for StreamController.
+on a button for [StreamController](https://github.com/StreamController/StreamController).
 
 !!It is still being developed so expect the Plugin to sometimes crash your setup!!
 
